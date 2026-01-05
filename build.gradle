@@ -20,7 +20,7 @@ gradlePlugin {
     plugins {
         androidStringExtractor {
             id = 'android-string-extractor'
-            implementationClass = 'com.itobjects.gradle.plugins.androidlayoutstringextractor.AndroidLayoutStringExtractorPlugin'
+            implementationClass = 'de.ito.gradle.plugin.androidstringextractor.AndroidStringExtractorPlugin'
         }
     }
 }
