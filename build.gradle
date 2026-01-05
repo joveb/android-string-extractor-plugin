@@ -1,91 +1,43 @@
 plugins {
-  id "com.jfrog.bintray" version "1.7.2"
-  id 'com.github.kt3k.coveralls' version '2.6.3'
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
 }
 
-apply plugin: 'java-gradle-plugin'
-apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
-
-group = 'de.ito.gradle.plugin'
-version = '0.1.1'
+group = 'com.github.joveb'
+version = '1.0.3'
 
 repositories {
-  jcenter()
+    mavenCentral()
+    google()
 }
 
 dependencies {
-  compile 'org.apache.commons:commons-lang3:3.4'
-  testCompile 'org.mockito:mockito-core:1.+'
-  testCompile 'junit:junit:4.12'
+    implementation gradleApi()
+    implementation localGroovy()
 }
 
 gradlePlugin {
-  plugins {
-    androidStringExtractor {
-      id = 'android-string-extractor'
-      implementationClass =
-              'de.ito.gradle.plugin.androidstringextractor.AndroidStringExtractorPlugin'
+    plugins {
+        androidStringExtractor {
+            id = 'android-string-extractor'
+            implementationClass = 'com.itobjects.gradle.plugins.androidlayoutstringextractor.AndroidLayoutStringExtractorPlugin'
+        }
     }
-  }
 }
 
-jacoco {
-  toolVersion '0.7.7.201606060606'
-}
-
-jacocoTestReport {
-  reports {
-    xml.enabled true
-    html.enabled true
-  }
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier = 'sources'
-  from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = 'javadoc'
-  from javadoc.destinationDir
-}
-
-artifacts {
-  archives sourcesJar, javadocJar
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      from components.java
-      artifact sourcesJar
-      artifact javadocJar
-      groupId project.group
-      artifactId 'android-string-extractor'
-      version project.version
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = 'android-string-extractor-plugin'
+            version = project.version
+        }
     }
-  }
-}
-
-bintray {
-  user = project.hasProperty('bintray_user') ? project.bintray_user : ''
-  key = project.hasProperty('bintray_key') ? project.bintray_key : ''
-
-  publications = ['mavenJava']
-  dryRun  = false
-  publish = false
-  pkg {
-    repo = 'maven'
-    name = 'de.ito.gradle.plugin:android-string-extractor'
-    desc = 'Gradle plugin which automatically extracts hardcoded strings from Android layouts.'
-    licenses = ['MIT']
-    vcsUrl = 'https://github.com/it-objects/android-string-extractor-plugin.git'
-    labels = ['Android', 'Gradle', 'plugin', 'string', 'extraction']
-    publicDownloadNumbers = false
-    version {
-      name = project.version
-      desc = ''
-    }
-  }
 }
